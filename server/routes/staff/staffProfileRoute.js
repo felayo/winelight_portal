@@ -5,18 +5,19 @@ const {
   createStaffProfile,
   updateStaffProfile,
   deleteStaffProfile,
+  uploadDocument
 } = require("../../controllers/staff/staffProfile");
 
+const { upload } = require("../../middleware/multer");
 
 const router = express.Router();
-//const { upload } = require("../../middleware/multer");
+
 
 
 router.get("/", getStaffProfile);
-// router.post("/", upload.single("avatar"), createAgentProfile)
-router.post("/", createStaffProfile);
-//router.put("/", upload.single("avatar"), updateAgentProfile); // update profile on dashboard
-router.put("/", updateStaffProfile); // update profile on dashboard
+router.post("/", upload.single("avatar"), createStaffProfile)
+router.put("/", upload.any(), updateStaffProfile);
+router.put("/upload", upload.any(), uploadDocument);
 router.delete("/", deleteStaffProfile); // delete profile on dashboard
 
 module.exports = router;

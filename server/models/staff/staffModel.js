@@ -26,17 +26,28 @@ const StaffSchema = new mongoose.Schema(
       },
       file: {
         type: String,
-      }
+      },
     },
     user: {
       type: mongoose.Schema.ObjectId,
-      ref: 'User',
-      required: true
+      ref: "User",
+      required: true,
     },
+    documents: [
+      {
+        name: {
+          type: String,
+          trim: true,
+        },
+        file: {
+          type: String,
+        },
+      },
+    ],
   },
   { timestamps: true }
 );
 
 const Staff = mongoose.model("Staff", StaffSchema);
 
-module.exports = Staff
+module.exports = Staff;
