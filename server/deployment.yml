@@ -1,0 +1,31 @@
+apiVersion: apps/v1.0.0
+kind: Deployment
+metadata:
+  name: winelight-portal
+  labels:
+    app: winelight-portal
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: winelight-portal
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 2
+      maxSurge: 2
+  template:
+    metadata:
+      labels:
+        app: winelight-portal
+    spec:
+      containers:
+      - name: winelight-portal
+        # image: IMAGE_TAG
+        image: felayo/winelight-portal
+        securityContext:
+          privileged: false
+          readOnlyRootFilesystem: false
+          allowPrivilegeEscalation: false
+        ports:
+          - containerPort: 3000
