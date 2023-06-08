@@ -1,1 +1,13 @@
-FROM node:17-alpine
+FROM node:alpine
+
+WORKDIR /usr/src/app
+
+COPY package*.json .
+
+RUN npm ci --omit=dev
+
+COPY . .
+
+EXPOSE 3000
+
+CMD ["npm", "start"]

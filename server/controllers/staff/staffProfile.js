@@ -23,7 +23,7 @@ exports.getStaffProfile = asyncHandler(async (req, res, next) => {
 });
 
 exports.createStaffProfile = asyncHandler(async (req, res, next) => {
-  const file = req.file;
+  const files = req.files;
   const userId = req.user.id;
 
   let staff = await Staff.findOne({ user: userId });
@@ -33,29 +33,39 @@ exports.createStaffProfile = asyncHandler(async (req, res, next) => {
     );
   }
 
-  if (file) {
+  if (files) {
     const avatar = {
-      name: file.fieldname,
-      file: file.path,
+      name: files["avatar"][0].fieldname,
+      file: files["avatar"][0].location,
     };
+
+    const documents = files["documents"].map((file) => {
+      return {
+        name: file.fieldname,
+        file: file.location,
+      }
+    })
+
     req.body.avatar = avatar;
+    req.body.documents = documents;
   }
+
+
   req.body.user = userId;
-  // req.body.department = req.params.deptId
+  
   staff = await Staff.create(req.body);
-  res
-    .status(201)
-    .json({
-      success: true,
-      message: "Staff profile created successfully",
-      data: staff,
-    });
+  res.status(201).json({
+    success: true,
+    message: "Staff profile created successfully",
+    data: staff,
+  });
 });
+
 
 exports.updateStaffProfile = asyncHandler(async (req, res, next) => {
   const userId = req.user.id;
   const file = req.file;
-  
+
   let staff = await Staff.findOne({ user: userId });
   if (!staff)
     return next(
@@ -64,7 +74,7 @@ exports.updateStaffProfile = asyncHandler(async (req, res, next) => {
   if (file) {
     const avatar = {
       name: file.fieldname,
-      file: file.path
+      file: file.location,
     };
     req.body.avatar = avatar;
   }
@@ -86,7 +96,9 @@ exports.uploadDocument = asyncHandler(async (req, res, next) => {
   const staff = await Staff.findOne({ user: staffId });
 
   if (!staff) {
-    return next(new ErrorResponse("No staff account was found for this user", 404));
+    return next(
+      new ErrorResponse("No staff account was found for this user", 404)
+    );
   }
 
   if (!files || !Array.isArray(files) || files.length === 0) {
@@ -96,7 +108,7 @@ exports.uploadDocument = asyncHandler(async (req, res, next) => {
   const documents = files.map((file) => {
     return {
       name: file.fieldname,
-      file: file.path,
+      file: file.location,
     };
   });
 
@@ -106,10 +118,9 @@ exports.uploadDocument = asyncHandler(async (req, res, next) => {
   res.status(200).json({
     success: true,
     message: "Files uploaded successfully",
-    data: student,
+    data: staff,
   });
 });
-
 
 exports.deleteStaffProfile = asyncHandler(async (req, res, next) => {
   const staffID = req.user.id;
