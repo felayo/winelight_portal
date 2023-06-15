@@ -1,31 +1,27 @@
-apiVersion: apps/v1.0.0
+apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: winelight-portal
-  labels:
-    app: winelight-portal
+  name: winelight-app
+  namespace: default
 spec:
-  replicas: 3
+  replicas: 2
   selector:
     matchLabels:
-      app: winelight-portal
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxUnavailable: 2
-      maxSurge: 2
+      app: web
   template:
     metadata:
       labels:
-        app: winelight-portal
+        app: web
     spec:
       containers:
-      - name: winelight-portal
-        # image: IMAGE_TAG
-        image: felayo/winelight-portal
-        securityContext:
-          privileged: false
-          readOnlyRootFilesystem: false
-          allowPrivilegeEscalation: false
-        ports:
-          - containerPort: 3000
+        - name: wine-portal
+          image: felayo/wine-portal:v1.0.0
+          ports:
+            - containerPort: 3000
+          env:
+          - name: NODE_ENV
+            value: "development"
+          - name: AWS_ACCESS_KEY_ID
+            value: "AKIASTLVRTEUSPLHH4MW"
+          - name: AWS_SECRET_ACCESS_KEY
+            value: "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"
